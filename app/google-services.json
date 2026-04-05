@@ -1,0 +1,10 @@
+{
+  "project_info": { "project_number": "12345", "project_id": "dummy" },
+  "client": [{
+    "client_info": { "mobilesdk_app_id": "1:12345:android:12345", "android_client_info": { "package_name": "net.vonforst.evmap" } },
+    "oauth_client": [],
+    "api_key": [{ "current_key": "dummy" }],
+    "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+  }],
+  "configuration_version": "1"
+}

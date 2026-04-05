@@ -9,6 +9,7 @@ plugins {
     id("com.google.devtools.ksp").version("2.0.21-1.0.28")
     id("androidx.navigation.safeargs.kotlin")
     id("com.mikepenz.aboutlibraries.plugin")
+    id("com.google.gms.google-services")
 }
 
 
@@ -320,6 +321,11 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     implementation("com.github.anboralabs:spatia-room:1.0.1")
+
+    // Firebase Auth
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.firebaseui:firebase-ui-auth:8.0.2")
 
 
 

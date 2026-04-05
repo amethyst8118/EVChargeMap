@@ -90,6 +90,11 @@
         android:name="net.vonforst.evmap.fragment.preference.DeveloperSettingsFragment"
         android:label="@string/developer_options"
         tools:layout="@layout/fragment_preference" />
+    <fragment
+        android:id="@+id/settings_account"
+        android:name="net.vonforst.evmap.fragment.preference.AccountSettingsFragment"
+        android:label="Account Settings"
+        tools:layout="@layout/fragment_preference" />
     <navigation
         android:id="@+id/favs"
         app:startDestination="@id/favs_frag">

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="Account Information">
+        <Preference
+            android:key="account_status"
+            android:title="Not signed in"
+            android:summary="Click to sign in or create an account"
+            android:icon="@drawable/ic_person" />
+        <Preference
+            android:key="account_logout"
+            android:title="Sign out"
+            android:icon="@drawable/ic_logout"
+            app:isPreferenceVisible="false" />
+    </PreferenceCategory>
+</PreferenceScreen>
