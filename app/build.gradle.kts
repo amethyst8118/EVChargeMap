@@ -25,6 +25,11 @@ android {
         versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Hardcode the expected missing flavor config fields to emulate fossNormal
+        buildConfigField("String", "FLAVOR", "\"fossNormal\"")
+        buildConfigField("String", "FLAVOR_dependencies", "\"foss\"")
+        buildConfigField("String", "FLAVOR_automotive", "\"normal\"")
     }
 
     ksp {
