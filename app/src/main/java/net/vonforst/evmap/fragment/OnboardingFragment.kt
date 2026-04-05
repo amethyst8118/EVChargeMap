@@ -3,6 +3,7 @@ package net.vonforst.evmap.fragment
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
@@ -22,10 +23,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.FragmentOnboardingBinding
 import net.vonforst.evmap.databinding.FragmentOnboardingDataSourceBinding
 import net.vonforst.evmap.databinding.FragmentOnboardingIconsBinding
+import net.vonforst.evmap.databinding.FragmentOnboardingLoginBinding
 import net.vonforst.evmap.databinding.FragmentOnboardingWelcomeBinding
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.navigation.safeNavigate
@@ -105,12 +111,13 @@ class OnboardingFragment : Fragment() {
 
 class OnboardingViewPagerAdapter(fragment: Fragment) :
     FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = 4
 
     override fun createFragment(position: Int): Fragment = when (position) {
         0 -> WelcomeFragment()
         1 -> IconsFragment()
-        2 -> DataSourceSelectFragment()
+        2 -> LoginOnboardingFragment()
+        3 -> DataSourceSelectFragment()
         else -> throw IllegalArgumentException()
     }
 }
@@ -209,6 +216,72 @@ class IconsFragment : OnboardingPageFragment() {
     override fun onPause() {
         super.onPause()
         labels.forEach { it.alpha = 0f }
+    }
+}
+
+class LoginOnboardingFragment : OnboardingPageFragment() {
+    private lateinit var binding: FragmentOnboardingLoginBinding
+
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract(),
+    ) { res ->
+        this.onSignInResult(res)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentOnboardingLoginBinding.inflate(inflater, container, false)
+
+        binding.btnSignIn.setOnClickListener {
+            launchSignInFlow()
+        }
+
+        binding.btnSkip.setOnClickListener {
+            parent.goToNext()
+        }
+
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateLoginState()
+    }
+
+    private fun launchSignInFlow() {
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build()
+        )
+
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .setIsSmartLockEnabled(false)
+            .setTheme(R.style.AppTheme)
+            .build()
+        signInLauncher.launch(signInIntent)
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        if (result.resultCode == RESULT_OK) {
+            updateLoginState()
+            // Auto-advance to next page after successful sign-in
+            parent.goToNext()
+        }
+    }
+
+    private fun updateLoginState() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            binding.loginTitle.text = "Signed in as"
+            binding.loginDesc.text = user.email ?: "Unknown Email"
+            binding.btnSignIn.text = getString(R.string.get_started)
+            binding.btnSignIn.setOnClickListener { parent.goToNext() }
+            binding.btnSkip.visibility = View.GONE
+        }
     }
 }
 

@@ -26,5 +26,14 @@
             android:summary="Enter your registration"
             android:icon="@drawable/ic_developer"
             app:isPreferenceVisible="false" />
+
+        <EditTextPreference
+            android:key="vehicle_charge_rate"
+            android:title="@string/vehicle_charge_rate_title"
+            android:summary="@string/vehicle_charge_rate_summary_default"
+            android:inputType="numberDecimal"
+            android:icon="@drawable/ic_lightning"
+            app:isPreferenceVisible="false" />
     </PreferenceCategory>
 </PreferenceScreen>
+

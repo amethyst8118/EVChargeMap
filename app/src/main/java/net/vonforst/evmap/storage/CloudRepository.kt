@@ -28,7 +28,8 @@ object CloudRepository {
 
     data class VehicleProfile(
         val vehicleName: String = "",
-        val vehicleRegistration: String = ""
+        val vehicleRegistration: String = "",
+        val vehicleChargeRate: Double = 0.0
     )
 
     /**
@@ -46,7 +47,8 @@ object CloudRepository {
             if (doc.exists()) {
                 VehicleProfile(
                     vehicleName = doc.getString("vehicle_name") ?: "",
-                    vehicleRegistration = doc.getString("vehicle_registration") ?: ""
+                    vehicleRegistration = doc.getString("vehicle_registration") ?: "",
+                    vehicleChargeRate = doc.getDouble("vehicle_charge_rate") ?: 0.0
                 )
             } else null
         } catch (_: Exception) {
@@ -58,7 +60,11 @@ object CloudRepository {
      * Writes (or merges) the vehicle profile fields into Firestore.
      * Accepts a partial map so callers can push a single field at a time.
      */
-    suspend fun setVehicleProfile(vehicleName: String, vehicleRegistration: String) {
+    suspend fun setVehicleProfile(
+        vehicleName: String,
+        vehicleRegistration: String,
+        vehicleChargeRate: Double = 0.0
+    ) {
         val uid = uid() ?: return
         try {
             firestore
@@ -67,7 +73,8 @@ object CloudRepository {
                 .set(
                     hashMapOf(
                         "vehicle_name" to vehicleName,
-                        "vehicle_registration" to vehicleRegistration
+                        "vehicle_registration" to vehicleRegistration,
+                        "vehicle_charge_rate" to vehicleChargeRate
                     ),
                     SetOptions.merge()
                 )

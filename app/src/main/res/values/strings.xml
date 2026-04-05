@@ -392,4 +392,16 @@
     <string name="chargeprice_removal_2025_dialog_detail">Costs for Chargeprice data access have risen sharply and can’t be covered by donations, so EVMap can no longer show this data directly. For now, this opens the Chargeprice website. An alternative solution is being developed, but it’ll take time and may start with limited features. Thanks for your patience and support!</string>
     <string name="auto_use_new_map_screen">New map screen (beta)</string>
     <string name="auto_confirm_delete_profile">Delete filter profile “%s“?</string>
+
+    <!-- Onboarding Login -->
+    <string name="sign_in_title">Sign in to sync your data</string>
+    <string name="sign_in_description">Sign in to sync your favorites and vehicle details across all your devices via the cloud.</string>
+    <string name="sign_in_button">Sign in</string>
+    <string name="skip">Skip for now</string>
+    <string name="account_settings">Account</string>
+
+    <!-- Vehicle Charge Rate -->
+    <string name="vehicle_charge_rate_title">Vehicle Max Charge Rate (kW)</string>
+    <string name="vehicle_charge_rate_summary_default">Set your vehicle\'s max AC/DC charge rate</string>
+    <string name="charger_below_vehicle_rate">⚡ This charger\'s max power (%1$.0f kW) will not utilise your vehicle\'s max charge capability (%2$.0f kW)</string>
 </resources>

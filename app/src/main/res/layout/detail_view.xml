@@ -83,6 +83,10 @@
             name="apiName"
             type="String" />
 
+        <variable
+            name="vehicleChargeRate"
+            type="Double" />
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -350,7 +354,23 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintTop_toBottomOf="@+id/textView13" />
+                app:layout_constraintTop_toBottomOf="@+id/txtChargeRateWarning" />
+
+            <TextView
+                android:id="@+id/txtChargeRateWarning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="6dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="#E65100"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/textView13"
+                tools:text="⚡ This charger's max power (22 kW) will not utilise your vehicle's max charge capability (150 kW)"
+                tools:visibility="visible" />
 
             <View
                 android:id="@+id/divider3"

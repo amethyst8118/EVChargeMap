@@ -44,7 +44,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
         updateUI()
     }
 
-    private fun launchSignInFlow() {
+    fun launchSignInFlow() {
         val providers = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build()
         )
@@ -69,22 +69,29 @@ class AccountSettingsFragment : BaseSettingsFragment() {
 
         val vehicleName = sharedPreferences.getString("vehicle_name", "") ?: ""
         val vehicleReg = sharedPreferences.getString("vehicle_registration", "") ?: ""
+        val chargeRateStr = sharedPreferences.getString("vehicle_charge_rate", "") ?: ""
+        val chargeRate = chargeRateStr.toDoubleOrNull() ?: 0.0
 
         when (key) {
             "vehicle_name" -> {
                 findPreference<EditTextPreference>("vehicle_name")?.summary =
                     if (vehicleName.isBlank()) "Enter your vehicle name" else vehicleName
-                // Push merged profile to cloud
                 lifecycleScope.launch {
-                    CloudRepository.setVehicleProfile(vehicleName, vehicleReg)
+                    CloudRepository.setVehicleProfile(vehicleName, vehicleReg, chargeRate)
                 }
             }
             "vehicle_registration" -> {
                 findPreference<EditTextPreference>("vehicle_registration")?.summary =
                     if (vehicleReg.isBlank()) "Enter your registration" else vehicleReg
-                // Push merged profile to cloud
                 lifecycleScope.launch {
-                    CloudRepository.setVehicleProfile(vehicleName, vehicleReg)
+                    CloudRepository.setVehicleProfile(vehicleName, vehicleReg, chargeRate)
+                }
+            }
+            "vehicle_charge_rate" -> {
+                findPreference<EditTextPreference>("vehicle_charge_rate")?.summary =
+                    if (chargeRate > 0) "${chargeRate.toInt()} kW" else getString(R.string.vehicle_charge_rate_summary_default)
+                lifecycleScope.launch {
+                    CloudRepository.setVehicleProfile(vehicleName, vehicleReg, chargeRate)
                 }
             }
         }
@@ -96,6 +103,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
         val accountLogout = findPreference<Preference>("account_logout")
         val vehicleNamePref = findPreference<EditTextPreference>("vehicle_name")
         val vehicleRegPref = findPreference<EditTextPreference>("vehicle_registration")
+        val chargeRatePref = findPreference<EditTextPreference>("vehicle_charge_rate")
         
         if (user != null) {
             accountStatus?.title = "Signed in as"
@@ -103,6 +111,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
             accountLogout?.isVisible = true
             vehicleNamePref?.isVisible = true
             vehicleRegPref?.isVisible = true
+            chargeRatePref?.isVisible = true
             
             // Sync vehicle profile from Firestore on login
             lifecycleScope.launch {
@@ -111,16 +120,21 @@ class AccountSettingsFragment : BaseSettingsFragment() {
                     preferenceManager.sharedPreferences?.edit()?.apply {
                         putString("vehicle_name", profile.vehicleName)
                         putString("vehicle_registration", profile.vehicleRegistration)
+                        putString("vehicle_charge_rate", if (profile.vehicleChargeRate > 0) profile.vehicleChargeRate.toInt().toString() else "")
                         apply()
                     }
                     
                     vehicleNamePref?.text = profile.vehicleName
                     vehicleRegPref?.text = profile.vehicleRegistration
+                    chargeRatePref?.text = if (profile.vehicleChargeRate > 0) profile.vehicleChargeRate.toInt().toString() else ""
+                    
                     vehicleNamePref?.summary = if (profile.vehicleName.isBlank()) "Enter your vehicle name" else profile.vehicleName
                     vehicleRegPref?.summary = if (profile.vehicleRegistration.isBlank()) "Enter your registration" else profile.vehicleRegistration
+                    chargeRatePref?.summary = if (profile.vehicleChargeRate > 0) "${profile.vehicleChargeRate.toInt()} kW" else getString(R.string.vehicle_charge_rate_summary_default)
                 } else {
                     vehicleNamePref?.summary = "Enter your vehicle name"
                     vehicleRegPref?.summary = "Enter your registration"
+                    chargeRatePref?.summary = getString(R.string.vehicle_charge_rate_summary_default)
                 }
             }
         } else {
@@ -129,6 +143,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
             accountLogout?.isVisible = false
             vehicleNamePref?.isVisible = false
             vehicleRegPref?.isVisible = false
+            chargeRatePref?.isVisible = false
         }
     }
 }

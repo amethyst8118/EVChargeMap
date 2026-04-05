@@ -709,6 +709,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 updateFavoriteToggle()
                 markerManager?.highlighedCharger = it
                 markerManager?.animateBounce(it)
+                updateChargeRateWarning(it)
             } else {
                 bottomSheetBehavior.state = STATE_HIDDEN
                 markerManager?.highlighedCharger = null
@@ -820,6 +821,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         val charger = vm.chargerSparse.value ?: return
         val shareItem = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_share)
         shareItem.isVisible = charger.url != null
+    }
+
+    private fun updateChargeRateWarning(charger: ChargeLocation) {
+        val chargeRateStr = prefs.sp.getString("vehicle_charge_rate", "") ?: ""
+        val vehicleChargeRate = chargeRateStr.toDoubleOrNull() ?: 0.0
+        val chargerMaxPower = charger.maxPower
+
+        if (vehicleChargeRate > 0 && chargerMaxPower != null && chargerMaxPower < vehicleChargeRate) {
+            binding.detailView.txtChargeRateWarning.text =
+                getString(R.string.charger_below_vehicle_rate, chargerMaxPower, vehicleChargeRate)
+            binding.detailView.txtChargeRateWarning.visibility = View.VISIBLE
+        } else {
+            binding.detailView.txtChargeRateWarning.visibility = View.GONE
+        }
     }
 
     private fun setupAdapters() {
