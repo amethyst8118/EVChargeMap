@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <PreferenceCategory android:title="@string/about">
+
+        <Preference
+            android:key="version"
+            android:title="@string/version"
+            tools:summary="0.0.1" />
+
+        <Preference
+            android:key="copyright"
+            android:title="@string/copyright"
+            android:summary="@string/copyright_summary" />
+
+        <Preference
+            android:key="contributors"
+            android:title="@string/about_contributors" />
+
+        <Preference
+            android:key="website"
+            android:title="@string/website"
+            android:summary="@string/website_url" />
+
+        <Preference
+            android:key="faq"
+            android:title="@string/faq" />
+
+        <Preference
+            android:key="donate"
+            android:title="@string/donate"
+            android:summary="@string/donate_desc" />
+
+        <Preference
+            android:key="github_sponsors"
+            android:title="@string/github_sponsors"
+            android:summary="@string/github_sponsors_desc" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/contact">
+        <Preference
+            android:key="mastodon"
+            android:title="@string/mastodon"
+            android:summary="@string/mastodon_handle" />
+
+        <Preference
+            android:key="twitter"
+            android:title="@string/twitter"
+            android:summary="@string/twitter_handle" />
+
+        <Preference
+            android:key="goingelectric"
+            android:title="@string/goingelectric_forum" />
+
+        <Preference
+            android:key="tffforum"
+            android:title="@string/tff_forum" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/other">
+        <Preference
+            android:key="github_link"
+            android:title="@string/github_link_title"
+            android:summary="@string/github_link" />
+
+        <Preference
+            android:key="privacy"
+            android:title="@string/privacy" />
+
+        <Preference
+            android:key="oss_licenses"
+            android:title="@string/oss_licenses" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

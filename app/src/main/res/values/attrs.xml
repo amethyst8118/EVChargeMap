@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomNavigator">
+        <attr name="customDestination" format="string" />
+    </declare-styleable>
+    <declare-styleable name="MultiSelectDialogPreference">
+        <attr name="showAllButton" format="boolean" />
+        <attr name="defaultToAll" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="RangeSliderPreference">
+        <attr format="float" name="android:valueFrom" />
+        <attr format="float" name="android:valueTo" />
+        <attr format="float" name="android:stepSize" />
+        <attr format="boolean" name="updatesContinuously" />
+        <attr format="string" name="android:defaultValue" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/nav_group_main"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/map"
+            android:icon="@drawable/ic_map"
+            android:title="@string/menu_map" />
+        <item
+            android:id="@+id/favs"
+            android:icon="@drawable/ic_fav"
+            android:title="@string/menu_favs" />
+    </group>
+    <group
+        android:id="@+id/nav_group_links"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/report_new_charger"
+            android:icon="@drawable/ic_add"
+            android:title="@string/menu_report_new_charger" />
+    </group>
+    <group
+        android:id="@+id/nav_group_settings"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
+    </group>
+</menu>

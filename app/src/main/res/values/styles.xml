@@ -1,0 +1,97 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme.Base" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryContainer">@color/colorPrimaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
+        <item name="colorSecondaryContainer">@color/colorSecondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/colorSecondaryDark</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="preferenceTheme">@style/AppTheme.Preference</item>
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialog</item>
+        <item name="snackbarButtonStyle">@style/Button.TextButton.Snackbar.App</item>
+    </style>
+
+    <style name="AppTheme.Preference" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/fragment_preference</item>
+    </style>
+
+    <style name="AppTheme" parent="AppTheme.Base" />
+
+    <style name="AppTheme.LaunchScreen.Base" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimationDuration">999</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+
+        <!-- Workarounds for crashes when switching fragments after the app has been rotated.
+         This is needed because Theme.SplashScreen is not a MaterialComponents theme. -->
+        <item name="preferenceTheme">@style/AppTheme.Preference</item>
+        <item name="viewInflaterClass">
+            com.google.android.material.theme.MaterialComponentsViewInflater
+        </item>
+    </style>
+
+    <style name="AppTheme.LaunchScreen" parent="AppTheme.LaunchScreen.Base">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/intro_static</item>
+    </style>
+
+    <style name="NoElevationOverlay">
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="RoundedPopup">
+        <item name="popupMenuBackground">@drawable/rounded_rect_8dp</item>
+    </style>
+
+    <style name="Widget.App.Button.ElevatedButton.IconOnly" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Widget.App.Button.OutlinedButton.IconOnly.Small" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">7dp</item>
+        <item name="android:paddingRight">7dp</item>
+        <item name="android:minWidth">30dp</item>
+        <item name="android:minHeight">30dp</item>
+        <item name="iconTint">?android:textColorSecondary</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <!-- this is necessary to make sure the dialog gets "pushed up" when the keyboard appears -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="dialogCornerRadius">28dp</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
+    </style>
+
+    <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
+        <!-- reduce insets from 80dp to 24dp -->
+        <item name="backgroundInsetTop">24dp</item>
+        <item name="backgroundInsetBottom">24dp</item>
+    </style>
+
+    <style name="Button.TextButton.Snackbar.App" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="CarAppTheme">
+        <item name="carColorPrimary">@color/colorPrimary</item>
+        <item name="carColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="carColorSecondary">@color/colorSecondary</item>
+        <item name="carColorSecondaryDark">@color/colorSecondaryDark</item>
+    </style>
+
+</resources>

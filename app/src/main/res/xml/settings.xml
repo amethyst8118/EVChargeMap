@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.UiSettingsFragment"
+        android:title="@string/settings_ui"
+        android:icon="@drawable/ic_settings_ui" />
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.DataSettingsFragment"
+        android:title="@string/settings_data_sources"
+        android:icon="@drawable/ic_settings_data_source" />
+    <Preference
+        android:key="developer_options"
+        android:fragment="net.vonforst.evmap.fragment.preference.DeveloperSettingsFragment"
+        android:title="@string/developer_options"
+        android:icon="@drawable/ic_developer" />
+
+    <PreferenceCategory android:title="Notifications">
+        <SwitchPreferenceCompat
+            android:key="dummy_notifications"
+            android:title="Push notifications for Live Charger availability"
+            android:summary="Coming soon"
+            android:enabled="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

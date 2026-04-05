@@ -1,0 +1,419 @@
+import java.util.Base64
+
+plugins {
+    id("com.adarshr.test-logger") version "4.0.0"
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("com.google.devtools.ksp").version("2.0.21-1.0.28")
+    id("androidx.navigation.safeargs.kotlin")
+    id("com.mikepenz.aboutlibraries.plugin")
+}
+
+
+android {
+    useLibrary("android.car")
+
+    defaultConfig {
+        applicationId = "net.vonforst.evmap"
+        compileSdk = 36
+        minSdk = 23
+        targetSdk = 36
+        // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
+        versionCode = 270
+        versionName = "2.1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
+    val isRunningOnCI = System.getenv("CI") == "true"
+    val isCIKeystoreAvailable = System.getenv("KEYSTORE_PASSWORD") != null
+
+    signingConfigs {
+        create("release") {
+            if (isRunningOnCI && isCIKeystoreAvailable) {
+                // configure keystore
+                storeFile = file("../_ci/keystore.jks")
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEYSTORE_ALIAS")
+                keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = if (isRunningOnCI && !isCIKeystoreAvailable) {
+                null
+            } else if (!isRunningOnCI) {
+                signingConfigs.getByName("debug")
+            } else {
+                signingConfigs.getByName("release")
+            }
+        }
+        create("releaseAutomotivePackageName") {
+            // Faurecia Aptoide requires the automotive variant to use a separate package name
+            initWith(getByName("release"))
+            applicationIdSuffix = ".automotive"
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
+    }
+
+    sourceSets {
+        getByName("releaseAutomotivePackageName").setRoot("src/release")
+    }
+
+    flavorDimensions += listOf("dependencies", "automotive")
+    productFlavors {
+        create("foss") {
+            dimension = "dependencies"
+            isDefault = true
+        }
+        create("google") {
+            dimension = "dependencies"
+            versionNameSuffix = "-google"
+        }
+        create("normal") {
+            dimension = "automotive"
+            isDefault = true
+        }
+        create("automotive") {
+            dimension = "automotive"
+            versionNameSuffix = "-automotive"
+            versionCode = defaultConfig.versionCode!! + 1
+            minSdk = 29
+        }
+    }
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        buildConfig = true
+    }
+    lint {
+        disable += listOf("NullSafeMutableLiveData")
+        warning += listOf("MissingTranslation")
+    }
+    androidResources {
+        generateLocaleConfig = true
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    namespace = "net.vonforst.evmap"
+
+    // add API keys from environment variable if not set in apikeys.xml
+    applicationVariants.all {
+        var evmapKey =
+            System.getenv("EVMAP_API_KEY") ?: project.findProperty("EVMAP_API_KEY")?.toString()
+        if (evmapKey == null && project.hasProperty("EVMAP_API_KEY_ENCRYPTED")) {
+            evmapKey = decode(
+                project.findProperty("EVMAP_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (evmapKey != null) {
+            resValue("string", "evmap_key", evmapKey)
+        }
+        val goingelectricKey =
+            System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
+                ?.toString()
+        if (goingelectricKey != null) {
+            resValue("string", "goingelectric_key", goingelectricKey)
+        }
+        var nobilKey =
+            System.getenv("NOBIL_API_KEY") ?: project.findProperty("NOBIL_API_KEY")?.toString()
+        if (nobilKey == null && project.hasProperty("NOBIL_API_KEY_ENCRYPTED")) {
+            nobilKey = decode(
+                project.findProperty("NOBIL_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (nobilKey != null) {
+            resValue("string", "nobil_key", nobilKey)
+        }
+        var openchargemapKey =
+            System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
+                ?.toString()
+        if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
+            openchargemapKey = decode(
+                project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (openchargemapKey != null) {
+            resValue("string", "openchargemap_key", openchargemapKey)
+        }
+        val googleMapsKey =
+            System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
+                ?.toString()
+        if (googleMapsKey != null && flavorName.startsWith("google")) {
+            resValue("string", "google_maps_key", googleMapsKey)
+        }
+        var mapboxKey =
+            System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
+        if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
+            mapboxKey = decode(
+                project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (mapboxKey != null) {
+            resValue("string", "mapbox_key", mapboxKey)
+        }
+        var jawgKey =
+            System.getenv("JAWG_API_KEY") ?: project.findProperty("JAWG_API_KEY")?.toString()
+        if (jawgKey == null && project.hasProperty("JAWG_API_KEY_ENCRYPTED")) {
+            jawgKey = decode(
+                project.findProperty("JAWG_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (jawgKey != null) {
+            resValue("string", "jawg_key", jawgKey)
+        }
+        var arcgisKey =
+            System.getenv("ARCGIS_API_KEY") ?: project.findProperty("ARCGIS_API_KEY")?.toString()
+        if (arcgisKey == null && project.hasProperty("ARCGIS_API_KEY_ENCRYPTED")) {
+            arcgisKey = decode(
+                project.findProperty("ARCGIS_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (arcgisKey != null) {
+            resValue("string", "arcgis_key", jawgKey)
+        }
+        var fronyxKey =
+            System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
+        if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
+            fronyxKey = decode(
+                project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (fronyxKey != null) {
+            resValue("string", "fronyx_key", fronyxKey)
+        }
+        var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
+            ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")?.toString()
+        if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
+            acraKey = decode(
+                project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (acraKey != null) {
+            resValue("string", "acra_credentials", acraKey)
+        }
+    }
+
+    packaging {
+        jniLibs {
+            pickFirsts.addAll(
+                listOf(
+                    "lib/x86/libc++_shared.so",
+                    "lib/arm64-v8a/libc++_shared.so",
+                    "lib/x86_64/libc++_shared.so",
+                    "lib/armeabi-v7a/libc++_shared.so"
+                )
+            )
+        }
+    }
+}
+
+androidComponents {
+    beforeVariants { variantBuilder ->
+        if (variantBuilder.buildType == "releaseAutomotivePackageName"
+            && !variantBuilder.productFlavors.containsAll(
+                listOf(
+                    "automotive" to "automotive",
+                    "dependencies" to "foss"
+                )
+            )
+        ) {
+            // releaseAutomotivePackageName type is only needed for fossAutomotive
+            variantBuilder.enable = false
+        }
+    }
+}
+
+configurations {
+    create("googleNormalImplementation") {}
+    create("googleAutomotiveImplementation") {}
+}
+
+aboutLibraries {
+    license {
+        allowedLicenses = setOf(
+            "Apache-2.0", "mit", "BSD-2-Clause", "BSD-3-Clause", "EPL-1.0",
+            "asdkl",  // Android SDK
+            "Dual OpenSSL and SSLeay License",  // Android NDK OpenSSL
+            "Google Maps Platform Terms of Service",  // Google Maps SDK
+            "Unicode/ICU License", "Unicode-3.0",  // icu4j
+            "Bouncy Castle Licence",  // bcprov
+            "CDDL + GPLv2 with classpath exception",  // javax.annotation-api
+        )
+        strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
+    }
+    export {
+        excludeFields = setOf("generated")
+    }
+}
+
+dependencies {
+    val kotlinVersion: String by rootProject.extra
+    val aboutLibsVersion: String by rootProject.extra
+    val navVersion: String by rootProject.extra
+    val normalImplementation by configurations
+    val googleImplementation by configurations
+    val automotiveImplementation by configurations
+    val fossImplementation by configurations
+    val testGoogleImplementation by configurations
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation("androidx.activity:activity-ktx:1.11.0")
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("com.google.android.material:material:1.13.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.browser:browser:1.9.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("androidx.security:security-crypto:1.1.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.5")
+    implementation("com.github.ev-map:CustomBottomSheetBehavior:e48f73ea7b")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.12.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
+    implementation("com.squareup.moshi:moshi-adapters:1.15.2")
+    implementation("com.markomilos.jsonapi:jsonapi-retrofit:1.1.0")
+    implementation("io.coil-kt:coil:2.7.0")
+    implementation("com.github.ev-map:StfalconImageViewer:5082ebd392")
+    implementation("com.mikepenz:aboutlibraries-core:$aboutLibsVersion")
+    implementation("com.mikepenz:aboutlibraries:$aboutLibsVersion")
+    implementation("com.airbnb.android:lottie:6.6.10")
+    implementation("io.michaelrocks.bimap:bimap:1.1.0")
+    implementation("com.github.pengrad:mapscaleview:1.6.0")
+    implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
+    implementation("com.github.ev-map:locale-config-x:58b036abf4")
+
+    // Android Auto
+    val carAppVersion = "1.7.0"
+    implementation("androidx.car.app:app:$carAppVersion")
+    normalImplementation("androidx.car.app:app-projected:$carAppVersion")
+    automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
+
+    // AnyMaps
+    val anyMapsVersion = "65e06c4c9a"
+    implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
+    googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
+    googleImplementation("com.google.android.gms:play-services-maps:19.2.0")
+    implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion") {
+        // duplicates classes from mapbox-sdk-services
+        exclude("org.maplibre.gl", "android-sdk-geojson")
+    }
+    implementation("org.maplibre.gl:android-sdk:10.3.5") {
+        exclude("org.maplibre.gl", "android-sdk-geojson")
+    }
+
+    // Google Places
+    googleImplementation("com.google.android.libraries.places:places:3.5.0")
+    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+
+    // Mapbox Geocoding
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0")
+
+    // navigation library
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // viewmodel library
+    val lifecycleVersion = "2.9.2"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+
+    // room library
+    val roomVersion = "2.7.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("com.github.anboralabs:spatia-room:1.0.1")
+
+    // billing library
+    val billingVersion = "7.0.0"
+    googleImplementation("com.android.billingclient:billing:$billingVersion")
+    googleImplementation("com.android.billingclient:billing-ktx:$billingVersion")
+
+    // ACRA (crash reporting)
+    val acraVersion = "5.12.0"
+    implementation("ch.acra:acra-http:$acraVersion")
+    implementation("ch.acra:acra-dialog:$acraVersion")
+    implementation("ch.acra:acra-limiter:$acraVersion")
+
+    // debug tools
+    debugImplementation("com.jakewharton.timber:timber:5.0.1")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+
+    // testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    //noinspection GradleDependency
+    testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("androidx.test:core:1.7.0")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("androidx.car.app:app-testing:$carAppVersion")
+
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+}
+
+fun decode(s: String, key: String): String {
+    return String(xorWithKey(Base64.getDecoder().decode(s), key.toByteArray()), Charsets.UTF_8)
+}
+
+fun xorWithKey(a: ByteArray, key: ByteArray): ByteArray {
+    val out = ByteArray(a.size)
+    for (i in a.indices) {
+        out[i] = (a[i].toInt() xor key[i % key.size].toInt()).toByte()
+    }
+    return out
+}

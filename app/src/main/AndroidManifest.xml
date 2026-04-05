@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
+    <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
+    <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="google.navigation" />
+        </intent>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+
+        <package android:name="com.google.android.projection.gearhead" />
+        <package android:name="com.google.android.apps.automotive.templates.host" />
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
+    <application
+        android:name=".EvMapApplication"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/backup_rules_api31"
+        android:fullBackupOnly="true"
+        android:backupAgent=".storage.BackupAgent"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.mapbox.ACCESS_TOKEN"
+            android:value="@string/mapbox_key" />
+
+        <meta-data
+            android:name="io.jawg.ACCESS_TOKEN"
+            android:value="@string/jawg_key" />
+
+        <meta-data
+            android:name="com.arcgis.ACCESS_TOKEN"
+            android:value="@string/arcgis_key" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.LaunchScreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="geo" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Deutschland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Oesterreich/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Schweiz/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Albanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Andorra/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Aruba/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Belarus/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Belgien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Bosnien-und-Herzegowina/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Bulgarien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Daenemark/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Estland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Faeroeer/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Finnland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Frankreich/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Gibraltar/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Griechenland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Grossbritannien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Irland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Island/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Italien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Jordanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Kasachstan/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Kroatien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Lettland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Liechtenstein/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Litauen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Luxemburg/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Malta/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Marokko/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Mazedonien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Moldawien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Monaco/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Montenegro/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Niederlande/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Norwegen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Polen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Portugal/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Rumaenien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Russland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/San-Marino/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Schweden/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Serbien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Slowakei/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Slowenien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Spanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Tuerkei/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Tschechien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/USA/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Ukraine/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Ungarn/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="openchargemap.org"
+                    android:pathPattern="/site/poi/details/..*"
+                    android:scheme="https" />
+                <data
+                    android:host="map.openchargemap.io"
+                    android:path="/"
+                    android:scheme="https" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="net.vonforst.evmap" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <activity android:name=".auto.OAuthLoginActivity">
+
+        </activity>
+
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- Remove WorkManagerInitializer as we implement getWorkManagerConfiguration in application class -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <!-- Configuration for Android Auto app -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <meta-data
+            android:name="androidx.car.app.theme"
+            android:resource="@style/CarAppTheme" />
+
+        <meta-data
+            android:name="androidx.car.app.minCarApiLevel"
+            android:value="1" />
+
+        <service
+            android:name=".auto.CarAppService"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher"
+            android:exported="true"
+            android:foregroundServiceType="location">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.POI" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="net.vonforst.evmap" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

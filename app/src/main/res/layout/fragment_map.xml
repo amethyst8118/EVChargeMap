@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
+
+        <import type="net.vonforst.evmap.viewmodel.Status" />
+
+        <import type="com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike" />
+
+        <variable
+            name="vm"
+            type="net.vonforst.evmap.viewmodel.MapViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false">
+
+        <FrameLayout
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/fab_locate"
+            app:layout_anchorGravity="start|center_vertical"
+            android:layout_gravity="start|center_vertical">
+
+            <com.github.pengrad.mapscaleview.MapScaleView
+                android:id="@+id/scaleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="@dimen/map_toolbar_width"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
+
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="24dp"
+                android:theme="@style/NoElevationOverlay">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        app:contentInsetStartWithNavigation="70dp">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true">
+
+                                <net.vonforst.evmap.ui.AutocompleteTextViewWithSuggestions
+                                    android:id="@+id/search"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:singleLine="true"
+                                    android:scrollHorizontally="true"
+                                    android:ellipsize="end"
+                                    android:background="@null"
+                                    android:gravity="center_vertical"
+                                    android:hint="@{vm.chargepoints.progress != null ? @string/downloading_chargers_percent(vm.chargepoints.progress * 100) : @string/search}"
+                                    android:textSize="18sp"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    android:textColorHint="@color/hint_text_color"
+                                    android:dropDownVerticalOffset="8dp"
+                                    android:popupElevation="2dp"
+                                    android:popupBackground="@drawable/rounded_rect_24dp" />
+
+                                <ImageButton
+                                    android:id="@+id/clearSearch"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    app:invisibleUnless="@{search.text.length() > 0}"
+                                    app:tint="?colorControlNormal"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/handle"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:srcCompat="@drawable/ic_close"
+                                    android:contentDescription="@string/delete" />
+                            </LinearLayout>
+
+                            <include
+                                layout="@layout/app_logo_small"
+                                android:id="@+id/app_logo"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </FrameLayout>
+
+                    </com.google.android.material.appbar.MaterialToolbar>
+
+                    <ProgressBar
+                        android:id="@+id/progressBar2"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-10dp"
+                        android:layout_marginBottom="-7dp"
+                        android:indeterminate="@{ vm.chargepoints.progress == null }"
+                        android:progress="@{ vm.chargepoints.progress != null ? Math.round(vm.chargepoints.progress * 100f) : 0 }"
+                        android:max="100"
+                        android:visibility="visible"
+                        app:goneUnless="@{ vm.chargepoints.status == Status.LOADING }" />
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/gallery_container"
+            android:layout_width="@dimen/map_toolbar_width"
+            android:layout_height="@dimen/gallery_height_with_margin"
+            android:background="?android:colorBackground"
+            app:layout_behavior="@string/BackDropBottomSheetBehavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:data="@{vm.charger.data.photos}" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/collage_bw"
+                app:invisibleUnless="@{vm.charger.data.photos == null || vm.charger.data.photos.size() == 0}" />
+
+        </FrameLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_location"
+            app:backgroundTint="?android:colorBackground"
+            app:borderWidth="0dp"
+            app:isFabActive="@{ vm.myLocationEnabled }"
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
+            android:layout_width="@dimen/map_toolbar_width"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:orientation="vertical"
+            app:bottomsheetbehavior_anchorPoint="@dimen/gallery_height"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="@dimen/peek_height"
+            app:bottomsheetbehavior_defaultState="stateHidden"
+            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
+            android:clipToPadding="false"
+            tools:bottomsheetbehavior_defaultState="stateCollapsed">
+
+            <include
+                android:id="@+id/detail_view"
+                layout="@layout/detail_view"
+                app:charger="@{vm.charger}"
+                app:availability="@{vm.availability}"
+                app:filteredAvailability="@{vm.filteredAvailability}"
+                app:predictionData="@{vm.predictionData}"
+                app:chargeCards="@{vm.chargeCardMap}"
+                app:filteredChargeCards="@{vm.filteredChargeCards}"
+                app:distance="@{vm.chargerDistance}"
+                app:expanded="@{vm.bottomSheetExpanded}"
+                app:apiName="@{vm.apiName}"
+                app:teslaPricing="@{vm.teslaPricing}" />
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_directions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_directions"
+            android:translationX="@dimen/directions_fab_translationx"
+            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchorGravity="top|right|end"
+            app:layout_behavior="@string/ScrollAwareFABBehavior"
+            android:theme="@style/NoElevationOverlay" />
+
+        <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
+            android:id="@+id/detail_app_bar"
+            android:layout_width="@dimen/map_toolbar_width"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/MergedAppBarLayoutBehavior"
+            android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/Widget.Material3.FloatingActionButton.Small.Surface"
+            android:id="@+id/fab_layers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/layers_fab_top_padding"
+            app:tint="?colorControlNormal"
+            app:backgroundTint="?android:colorBackground"
+            app:borderWidth="0dp"
+            app:srcCompat="@drawable/ic_layers"
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior"
+            android:theme="@style/NoElevationOverlay" />
+
+        <View
+            android:id="@+id/navBarScrim"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="?android:colorBackground"
+            android:layout_gravity="bottom"
+            app:invisibleUnless="@{vm.bottomSheetState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED}"
+            tools:visibility="invisible" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/layers_sheet"
+            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="@dimen/layers_fab_top_padding"
+            android:visibility="invisible"
+            app:cardCornerRadius="16dp"
+            tools:visibility="visible">
+
+            <include
+                android:id="@+id/layers"
+                layout="@layout/map_layers"
+                app:vm="@{vm}" />
+        </androidx.cardview.widget.CardView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

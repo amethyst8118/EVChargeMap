@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="units"
+        android:title="@string/pref_units"
+        android:entries="@array/pref_units_names"
+        android:entryValues="@array/pref_units_values"
+        android:defaultValue="default"
+        android:summary="%s" />
+
+    <ListPreference
+        android:key="darkmode"
+        android:title="@string/pref_darkmode"
+        android:entries="@array/pref_darkmode_names"
+        android:entryValues="@array/pref_darkmode_values"
+        android:defaultValue="default"
+        android:summary="%s" />
+    <CheckBoxPreference
+        android:key="map_rotate_gestures_enabled"
+        android:title="@string/pref_map_rotate_gestures_enabled"
+        android:summaryOn="@string/pref_map_rotate_gestures_on"
+        android:summaryOff="@string/pref_map_rotate_gestures_off"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="map_scale_show"
+        android:title="@string/pref_map_scale"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="map_scale_meters_and_miles"
+        android:title="@string/pref_map_scale_meters_and_miles"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="navigate_use_maps"
+        android:title="@string/pref_navigate_use_maps"
+        android:summaryOn="@string/pref_navigate_use_maps_on"
+        android:summaryOff="@string/pref_navigate_use_maps_off"
+        android:defaultValue="true" />
+    <Preference
+        android:key="applink_associate"
+        android:title="@string/pref_applink_associate"
+        android:summary="@string/pref_applink_associate_summary" />
+</PreferenceScreen>
