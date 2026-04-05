@@ -10,7 +10,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import net.vonforst.evmap.R
 
-class AccountSettingsFragment : PreferenceFragmentCompat() {
+class AccountSettingsFragment : BaseSettingsFragment() {
+    override val isTopLevel = false
 
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract(),
@@ -19,7 +20,8 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.settings_account, rootKey)
+        super.onCreatePreferences(savedInstanceState, rootKey)
+        addPreferencesFromResource(R.xml.settings_account)
         
         val accountStatus = findPreference<Preference>("account_status")
         val accountLogout = findPreference<Preference>("account_logout")
