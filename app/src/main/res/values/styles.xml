@@ -94,4 +94,11 @@
         <item name="carColorSecondaryDark">@color/colorSecondaryDark</item>
     </style>
 
+    <!-- Theme for Firebase Auth UI — disables translucent status bar so content is not clipped -->
+    <style name="FirebaseAuthTheme" parent="AppTheme.Base">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
+    </style>
+
 </resources>

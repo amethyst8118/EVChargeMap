@@ -53,7 +53,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
             .setIsSmartLockEnabled(false)
-            .setTheme(R.style.AppTheme)
+            .setTheme(R.style.FirebaseAuthTheme)
             .build()
         signInLauncher.launch(signInIntent)
     }
