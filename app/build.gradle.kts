@@ -236,6 +236,7 @@ aboutLibraries {
             "Unicode/ICU License", "Unicode-3.0",  // icu4j
             "Bouncy Castle Licence",  // bcprov
             "CDDL + GPLv2 with classpath exception",  // javax.annotation-api
+            "Play Integrity API Terms of Service", // Firebase Auth
         )
         strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
     }
