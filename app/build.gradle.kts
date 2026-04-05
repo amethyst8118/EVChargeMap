@@ -61,11 +61,7 @@ android {
                 signingConfigs.getByName("release")
             }
         }
-        create("releaseAutomotivePackageName") {
-            // Faurecia Aptoide requires the automotive variant to use a separate package name
-            initWith(getByName("release"))
-            applicationIdSuffix = ".automotive"
-        }
+
         debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
@@ -73,29 +69,8 @@ android {
     }
 
     sourceSets {
-        getByName("releaseAutomotivePackageName").setRoot("src/release")
-    }
-
-    flavorDimensions += listOf("dependencies", "automotive")
-    productFlavors {
-        create("foss") {
-            dimension = "dependencies"
-            isDefault = true
-        }
-        create("google") {
-            dimension = "dependencies"
-            versionNameSuffix = "-google"
-        }
-        create("normal") {
-            dimension = "automotive"
-            isDefault = true
-        }
-        create("automotive") {
-            dimension = "automotive"
-            versionNameSuffix = "-automotive"
-            versionCode = defaultConfig.versionCode!! + 1
-            minSdk = 29
-        }
+        getByName("main").java.srcDirs("src/foss/java", "src/normal/java")
+        getByName("main").res.srcDirs("src/foss/res", "src/normal/res")
     }
 
     compileOptions {
@@ -171,12 +146,7 @@ android {
         if (openchargemapKey != null) {
             resValue("string", "openchargemap_key", openchargemapKey)
         }
-        val googleMapsKey =
-            System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
-                ?.toString()
-        if (googleMapsKey != null && flavorName.startsWith("google")) {
-            resValue("string", "google_maps_key", googleMapsKey)
-        }
+
         var mapboxKey =
             System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
         if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
@@ -248,26 +218,7 @@ android {
     }
 }
 
-androidComponents {
-    beforeVariants { variantBuilder ->
-        if (variantBuilder.buildType == "releaseAutomotivePackageName"
-            && !variantBuilder.productFlavors.containsAll(
-                listOf(
-                    "automotive" to "automotive",
-                    "dependencies" to "foss"
-                )
-            )
-        ) {
-            // releaseAutomotivePackageName type is only needed for fossAutomotive
-            variantBuilder.enable = false
-        }
-    }
-}
 
-configurations {
-    create("googleNormalImplementation") {}
-    create("googleAutomotiveImplementation") {}
-}
 
 aboutLibraries {
     license {
@@ -291,11 +242,7 @@ dependencies {
     val kotlinVersion: String by rootProject.extra
     val aboutLibsVersion: String by rootProject.extra
     val navVersion: String by rootProject.extra
-    val normalImplementation by configurations
-    val googleImplementation by configurations
-    val automotiveImplementation by configurations
-    val fossImplementation by configurations
-    val testGoogleImplementation by configurations
+
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -334,14 +281,12 @@ dependencies {
     // Android Auto
     val carAppVersion = "1.7.0"
     implementation("androidx.car.app:app:$carAppVersion")
-    normalImplementation("androidx.car.app:app-projected:$carAppVersion")
-    automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
+    implementation("androidx.car.app:app-projected:$carAppVersion")
 
     // AnyMaps
     val anyMapsVersion = "65e06c4c9a"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
-    googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
-    googleImplementation("com.google.android.gms:play-services-maps:19.2.0")
+
     implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion") {
         // duplicates classes from mapbox-sdk-services
         exclude("org.maplibre.gl", "android-sdk-geojson")
@@ -350,9 +295,7 @@ dependencies {
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
 
-    // Google Places
-    googleImplementation("com.google.android.libraries.places:places:3.5.0")
-    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+
 
     // Mapbox Geocoding
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0")
@@ -373,10 +316,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     implementation("com.github.anboralabs:spatia-room:1.0.1")
 
-    // billing library
-    val billingVersion = "7.0.0"
-    googleImplementation("com.android.billingclient:billing:$billingVersion")
-    googleImplementation("com.android.billingclient:billing-ktx:$billingVersion")
+
 
     // ACRA (crash reporting)
     val acraVersion = "5.12.0"
