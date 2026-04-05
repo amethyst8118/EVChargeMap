@@ -49,6 +49,8 @@ class AccountSettingsFragment : BaseSettingsFragment() {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
+            .setIsSmartLockEnabled(false)
+            .setTheme(androidx.appcompat.R.style.Theme_AppCompat_DayNight_DarkActionBar)
             .build()
         signInLauncher.launch(signInIntent)
     }
