@@ -20,8 +20,7 @@ class AccountSettingsFragment : BaseSettingsFragment() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        super.onCreatePreferences(savedInstanceState, rootKey)
-        addPreferencesFromResource(R.xml.settings_account)
+        setPreferencesFromResource(R.xml.settings_account, rootKey)
         
         val accountStatus = findPreference<Preference>("account_status")
         val accountLogout = findPreference<Preference>("account_logout")
@@ -58,6 +57,10 @@ class AccountSettingsFragment : BaseSettingsFragment() {
         if (result.resultCode == RESULT_OK) {
             updateUI()
         }
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: android.content.SharedPreferences, key: String?) {
+        // No preferences need dynamic handling here
     }
 
     private fun updateUI() {
