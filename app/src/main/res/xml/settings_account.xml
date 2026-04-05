@@ -12,5 +12,19 @@
             android:title="Sign out"
             android:icon="@drawable/ic_logout"
             app:isPreferenceVisible="false" />
+            
+        <EditTextPreference
+            android:key="vehicle_name"
+            android:title="Vehicle Name"
+            android:summary="Enter your vehicle name"
+            android:icon="@drawable/ic_developer"
+            app:isPreferenceVisible="false" />
+            
+        <EditTextPreference
+            android:key="vehicle_registration"
+            android:title="Registration Number"
+            android:summary="Enter your registration"
+            android:icon="@drawable/ic_developer"
+            app:isPreferenceVisible="false" />
     </PreferenceCategory>
 </PreferenceScreen>

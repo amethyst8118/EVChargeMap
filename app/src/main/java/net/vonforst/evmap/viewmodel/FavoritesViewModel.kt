@@ -14,6 +14,7 @@ import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.CloudRepository
 import net.vonforst.evmap.utils.distanceBetween
 
 class FavoritesViewModel(application: Application) :
@@ -36,6 +37,32 @@ class FavoritesViewModel(application: Application) :
                     reloadAvailability(forceReload = false)
                 } else {
                     value = null
+                }
+            }
+        }
+    }
+
+    init {
+        syncFavoritesFromCloud()
+    }
+
+    /**
+     * Pulls all favorited charger IDs from Firestore and merges any
+     * missing entries into the local Room database so the map UI
+     * displays all cross-device favorites.
+     */
+    private fun syncFavoritesFromCloud() {
+        viewModelScope.launch {
+            val cloudFavs = CloudRepository.getAllCloudFavorites()
+            if (cloudFavs.isNotEmpty()) {
+                val currentIds = db.favoritesDao().getAllFavoritesAsync()
+                    .map { it.favorite.chargerId }
+                cloudFavs.forEach { (chargerId, dataSource) ->
+                    if (!currentIds.contains(chargerId)) {
+                        db.favoritesDao().insert(
+                            Favorite(chargerId = chargerId, chargerDataSource = dataSource)
+                        )
+                    }
                 }
             }
         }
@@ -117,9 +144,17 @@ class FavoritesViewModel(application: Application) :
 
     fun insertFavorite(charger: ChargeLocation) {
         viewModelScope.launch {
+            // Save locally first (source of truth)
             db.chargeLocationsDao().insert(charger)
             db.favoritesDao()
                 .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
+
+            // Push to Firestore via CloudRepository
+            CloudRepository.pushFavorite(
+                chargerId = charger.id,
+                chargerDataSource = charger.dataSource,
+                chargerName = charger.name
+            )
         }
     }
 
@@ -143,7 +178,14 @@ class FavoritesViewModel(application: Application) :
 
     fun deleteFavorite(fav: Favorite) {
         viewModelScope.launch {
+            // Delete locally first (source of truth)
             db.favoritesDao().delete(fav)
+
+            // Remove from Firestore via CloudRepository
+            CloudRepository.removeFavorite(
+                chargerId = fav.chargerId,
+                chargerDataSource = fav.chargerDataSource
+            )
         }
     }
 }
