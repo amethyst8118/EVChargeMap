@@ -44,6 +44,7 @@ import net.vonforst.evmap.model.getMultipleChoiceValue
 import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
+import net.vonforst.evmap.storage.CloudRepository
 import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -352,12 +353,25 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             db.chargeLocationsDao().insert(charger)
             db.favoritesDao()
                 .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
+
+            // Push to Firestore
+            CloudRepository.pushFavorite(
+                chargerId = charger.id,
+                chargerDataSource = charger.dataSource,
+                chargerName = charger.name
+            )
         }
     }
 
     fun deleteFavorite(favorite: Favorite) {
         viewModelScope.launch {
             db.favoritesDao().delete(favorite)
+
+            // Remove from Firestore
+            CloudRepository.removeFavorite(
+                chargerId = favorite.chargerId,
+                chargerDataSource = favorite.chargerDataSource
+            )
         }
     }
 
