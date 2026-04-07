@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
+        <import type="net.afsal.evmap.viewmodel.MapViewModel" />
 
         <import type="com.car2go.maps.AnyMap" />
 

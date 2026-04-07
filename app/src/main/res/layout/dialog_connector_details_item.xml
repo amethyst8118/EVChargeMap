@@ -5,9 +5,9 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.adapter.ConnectorDetailsAdapter.ConnectorDetails" />
+        <import type="net.afsal.evmap.adapter.ConnectorDetailsAdapter.ConnectorDetails" />
 
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+        <import type="net.afsal.evmap.ui.BindingAdaptersKt" />
         <import type="java.time.Instant" />
 
         <variable

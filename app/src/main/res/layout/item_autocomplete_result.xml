@@ -6,12 +6,12 @@
     <data>
 
         <import type="android.text.util.Linkify" />
-        <import type="net.vonforst.evmap.adapter.PlaceAutocompleteAdapterKt" />
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+        <import type="net.afsal.evmap.adapter.PlaceAutocompleteAdapterKt" />
+        <import type="net.afsal.evmap.ui.BindingAdaptersKt" />
 
         <variable
             name="item"
-            type="net.vonforst.evmap.autocomplete.AutocompletePlace" />
+            type="net.afsal.evmap.autocomplete.AutocompletePlace" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

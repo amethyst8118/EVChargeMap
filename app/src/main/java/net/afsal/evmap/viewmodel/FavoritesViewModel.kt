@@ -1,0 +1,191 @@
+package net.afsal.evmap.viewmodel
+
+import android.app.Application
+import androidx.lifecycle.*
+import com.car2go.maps.model.LatLng
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import net.afsal.evmap.adapter.Equatable
+import net.afsal.evmap.api.availability.AvailabilityRepository
+import net.afsal.evmap.api.availability.ChargeLocationStatus
+import net.afsal.evmap.api.availability.ChargepointStatus
+import net.afsal.evmap.model.ChargeLocation
+import net.afsal.evmap.model.Favorite
+import net.afsal.evmap.model.FavoriteWithDetail
+import net.afsal.evmap.storage.AppDatabase
+import net.afsal.evmap.storage.CloudRepository
+import net.afsal.evmap.utils.distanceBetween
+
+class FavoritesViewModel(application: Application) :
+    AndroidViewModel(application) {
+    private var db = AppDatabase.getInstance(application)
+    private val availabilityRepo = AvailabilityRepository(application)
+
+    val favorites: LiveData<List<FavoriteWithDetail>> by lazy {
+        db.favoritesDao().getAllFavorites()
+    }
+
+    val location: MutableLiveData<LatLng> by lazy {
+        MutableLiveData<LatLng>()
+    }
+
+    val availability: MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>> by lazy {
+        MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>>().apply {
+            addSource(favorites) { favorites ->
+                if (favorites != null) {
+                    reloadAvailability(forceReload = false)
+                } else {
+                    value = null
+                }
+            }
+        }
+    }
+
+    init {
+        syncFavoritesFromCloud()
+    }
+
+    /**
+     * Pulls all favorited charger IDs from Firestore and merges any
+     * missing entries into the local Room database so the map UI
+     * displays all cross-device favorites.
+     */
+    private fun syncFavoritesFromCloud() {
+        viewModelScope.launch {
+            val cloudFavs = CloudRepository.getAllCloudFavorites()
+            if (cloudFavs.isNotEmpty()) {
+                val currentIds = db.favoritesDao().getAllFavoritesAsync()
+                    .map { it.favorite.chargerId }
+                cloudFavs.forEach { (chargerId, dataSource) ->
+                    if (!currentIds.contains(chargerId)) {
+                        db.favoritesDao().insert(
+                            Favorite(chargerId = chargerId, chargerDataSource = dataSource)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun reloadAvailability(forceReload: Boolean = true, callback: (() -> Unit)? = null) {
+        val favorites = favorites.value ?: return
+        val chargers = favorites.map { it.charger }
+        val previous = availability.value
+
+        viewModelScope.launch {
+            val data = hashMapOf<Long, Resource<ChargeLocationStatus>>()
+            chargers.forEach { charger ->
+                data[charger.id] = Resource.loading(null)
+            }
+            availability.value = data
+
+            chargers.map { charger ->
+                async {
+                    if (!forceReload && previous?.get(charger.id)?.status == Status.SUCCESS) {
+                        data[charger.id] = previous[charger.id]!!
+                        availability.value = data
+                    } else {
+                        data[charger.id] = availabilityRepo.getAvailability(charger)
+                        availability.value = data
+                    }
+                }
+            }.awaitAll()
+            callback?.invoke()
+        }
+    }
+
+    val listData: MediatorLiveData<List<FavoritesListItem>> by lazy {
+        MediatorLiveData<List<FavoritesListItem>>().apply {
+            val callback = { _: Any ->
+                listData.value = favorites.value?.map { favorite ->
+                    val charger = favorite.charger
+                    FavoritesListItem(
+                        favorite,
+                        totalAvailable(charger.id),
+                        charger.chargepoints.sumOf { it.count },
+                        location.value.let { loc ->
+                            if (loc == null) null else {
+                                distanceBetween(
+                                    loc.latitude,
+                                    loc.longitude,
+                                    charger.coordinates.lat,
+                                    charger.coordinates.lng
+                                )
+                            }
+                        })
+                }?.sortedBy { it.distance }
+            }
+            addSource(favorites, callback)
+            addSource(location, callback)
+            addSource(availability, callback)
+        }
+    }
+
+    data class FavoritesListItem(
+        val fav: FavoriteWithDetail,
+        val available: Resource<List<ChargepointStatus>>,
+        val total: Int,
+        val distance: Double?
+    ) : Equatable {
+        val charger
+            get() = fav.charger
+    }
+
+    private fun totalAvailable(id: Long): Resource<List<ChargepointStatus>> {
+        val availability = availability.value?.get(id) ?: return Resource.error(null, null)
+        if (availability.status != Status.SUCCESS) {
+            return Resource(availability.status, null, availability.message)
+        } else {
+            val values = availability.data?.status?.values ?: return Resource.error(null, null)
+            return Resource.success(values.flatten())
+        }
+    }
+
+    fun insertFavorite(charger: ChargeLocation) {
+        viewModelScope.launch {
+            // Save locally first (source of truth)
+            db.chargeLocationsDao().insert(charger)
+            db.favoritesDao()
+                .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
+
+            // Push to Firestore via CloudRepository
+            CloudRepository.pushFavorite(
+                chargerId = charger.id,
+                chargerDataSource = charger.dataSource,
+                chargerName = charger.name
+            )
+        }
+    }
+
+    val deletedFavorite: MutableLiveData<FavoriteWithDetail?> by lazy {
+        MutableLiveData<FavoriteWithDetail?>()
+    }
+
+    fun deleteFavoriteWithUndo(fav: FavoriteWithDetail) {
+        deletedFavorite.value = fav
+        deleteFavorite(fav.favorite)
+    }
+
+    fun undoDeletion() {
+        deletedFavorite.value?.let {
+            viewModelScope.launch {
+                insertFavorite(it.charger)
+            }
+            deletedFavorite.value = null
+        }
+    }
+
+    fun deleteFavorite(fav: Favorite) {
+        viewModelScope.launch {
+            // Delete locally first (source of truth)
+            db.favoritesDao().delete(fav)
+
+            // Remove from Firestore via CloudRepository
+            CloudRepository.removeFavorite(
+                chargerId = fav.chargerId,
+                chargerDataSource = fav.chargerDataSource
+            )
+        }
+    }
+}

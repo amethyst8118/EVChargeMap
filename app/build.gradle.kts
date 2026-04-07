@@ -17,7 +17,7 @@ android {
     useLibrary("android.car")
 
     defaultConfig {
-        applicationId = "net.vonforst.evmap"
+        applicationId = "net.afsal.evmap"
         compileSdk = 36
         minSdk = 23
         targetSdk = 36
@@ -108,7 +108,7 @@ android {
         }
     }
 
-    namespace = "net.vonforst.evmap"
+    namespace = "net.afsal.evmap"
 
     // add API keys from environment variable if not set in apikeys.xml
     applicationVariants.all {

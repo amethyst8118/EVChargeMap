@@ -5,15 +5,15 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
+        <import type="net.afsal.evmap.viewmodel.MapViewModel" />
 
-        <import type="net.vonforst.evmap.viewmodel.Status" />
+        <import type="net.afsal.evmap.viewmodel.Status" />
 
         <import type="com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike" />
 
         <variable
             name="vm"
-            type="net.vonforst.evmap.viewmodel.MapViewModel" />
+            type="net.afsal.evmap.viewmodel.MapViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -82,7 +82,7 @@
                                 android:focusable="true"
                                 android:focusableInTouchMode="true">
 
-                                <net.vonforst.evmap.ui.AutocompleteTextViewWithSuggestions
+                                <net.afsal.evmap.ui.AutocompleteTextViewWithSuggestions
                                     android:id="@+id/search"
                                     android:layout_width="0dp"
                                     android:layout_weight="1"

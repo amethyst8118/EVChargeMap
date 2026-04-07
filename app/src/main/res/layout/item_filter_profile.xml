@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="net.vonforst.evmap.storage.FilterProfile" />
+            type="net.afsal.evmap.storage.FilterProfile" />
     </data>
 
     <FrameLayout

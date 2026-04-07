@@ -11,29 +11,29 @@
 
         <import type="java.time.ZonedDateTime" />
 
-        <import type="net.vonforst.evmap.model.ChargeLocation" />
+        <import type="net.afsal.evmap.model.ChargeLocation" />
 
-        <import type="net.vonforst.evmap.model.Chargepoint" />
+        <import type="net.afsal.evmap.model.Chargepoint" />
 
-        <import type="net.vonforst.evmap.model.ChargeCard" />
+        <import type="net.afsal.evmap.model.ChargeCard" />
 
-        <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
+        <import type="net.afsal.evmap.api.availability.ChargeLocationStatus" />
 
-        <import type="net.vonforst.evmap.adapter.DataBindingAdaptersKt" />
+        <import type="net.afsal.evmap.adapter.DataBindingAdaptersKt" />
 
-        <import type="net.vonforst.evmap.adapter.DetailsAdapterKt" />
+        <import type="net.afsal.evmap.adapter.DetailsAdapterKt" />
 
-        <import type="net.vonforst.evmap.utils.LocationUtilsKt" />
+        <import type="net.afsal.evmap.utils.LocationUtilsKt" />
 
-        <import type="net.vonforst.evmap.viewmodel.Resource" />
+        <import type="net.afsal.evmap.viewmodel.Resource" />
 
-        <import type="net.vonforst.evmap.viewmodel.Status" />
+        <import type="net.afsal.evmap.viewmodel.Status" />
 
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+        <import type="net.afsal.evmap.ui.BindingAdaptersKt" />
 
-        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
+        <import type="net.afsal.evmap.api.ChargepointApiKt" />
 
-        <import type="net.vonforst.evmap.api.chargeprice.ChargepriceApi" />
+        <import type="net.afsal.evmap.api.chargeprice.ChargepriceApi" />
 
         <import type="android.text.format.DateUtils" />
 
@@ -41,7 +41,7 @@
 
         <import type="java.time.Duration" />
 
-        <import type="net.vonforst.evmap.api.fronyx.PredictionData" />
+        <import type="net.afsal.evmap.api.fronyx.PredictionData" />
 
         <variable
             name="charger"
@@ -65,7 +65,7 @@
 
         <variable
             name="teslaPricing"
-            type="net.vonforst.evmap.api.availability.tesla.Pricing" />
+            type="net.afsal.evmap.api.availability.tesla.Pricing" />
 
         <variable
             name="chargeCards"
@@ -421,7 +421,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView8" />
 
-            <net.vonforst.evmap.ui.BarGraphView
+            <net.afsal.evmap.ui.BarGraphView
                 android:id="@+id/prediction"
                 android:layout_width="0dp"
                 android:layout_height="100dp"

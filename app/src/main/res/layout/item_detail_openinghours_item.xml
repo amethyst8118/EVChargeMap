@@ -11,7 +11,7 @@
 
         <variable
             name="hours"
-            type="net.vonforst.evmap.model.OpeningHoursDays" />
+            type="net.afsal.evmap.model.OpeningHoursDays" />
 
         <variable
             name="dayOfWeek"
